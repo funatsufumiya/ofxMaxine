@@ -21,6 +21,8 @@ void ofApp::update(){
 void ofApp::draw(){
     video.draw(0, 0);
 
+    // FIXME: currently just value tests, not meaningful
+
     auto expression_coefficients = maxine.get_expressions();
 
     for(size_t i=0; i<expression_coefficients.size(); ++i){
