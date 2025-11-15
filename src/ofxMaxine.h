@@ -29,8 +29,6 @@
 #define NUM_LANDMARKS 126
 #define FPS_PRECISION 1000
 
-namespace godot {
-
 class ofxMaxine {
 
 private:
@@ -89,6 +87,7 @@ public:
     ~ofxMaxine();
 
     void setup();
+    void update();
 
     void printPoseRotation();
     void printExpressionCoefficients();
@@ -101,8 +100,8 @@ public:
     std::vector<ofVec2f> get_landmarks() const;
     int get_landmark_count() const;
     int get_expression_count() const;
-    Array get_expressions() const;
-    Array get_landmark_confidence() const;
+    std::vector<float> get_expressions() const;
+    std::vector<float> get_landmark_confidence() const;
     ofVec3f get_pose_translation() const;
     ofQuaternion get_pose_rotation() const;
     Transform3D get_pose_transform() const;
@@ -124,12 +123,12 @@ public:
 
     void normalizeExpressionsWeights();
 
-    Array get_keypoints() const;
-    Array get_keypoints3D() const;
-    Array get_joint_angles() const;
-    Array get_keypoints_confidence() const;
+    std::vector<ofVec2f> get_keypoints() const;
+    std::vector<ofVec3f> get_keypoints3D() const;
+    std::vector<ofQuaternion> get_joint_angles() const;
+    std::vector<float> get_keypoints_confidence() const;
     Array get_body_bounding_boxes() const;
-    Array get_body_bounding_box_confidence() const;
+    std::vector<float> get_body_bounding_box_confidence() const;
 
     void set_keypoints(const Array& p_value) {};
     void set_keypoints3D(const Array& p_value) {};
@@ -141,7 +140,7 @@ public:
     void drawLandmarks(cv::Mat& image);
     void drawKeypoints(cv::Mat& image);
 
-    Array get_gaze_angles_vector() const;
+    std::vector<float> get_gaze_angles_vector() const;
     ofVec3f get_gaze_direction() const;
     void set_gaze_angles_vector(const Array& p_value) {};
     void set_gaze_direction(const ofVec3f& p_value) {};
@@ -149,7 +148,5 @@ public:
     void set_show_capture(const bool should_show);
     bool get_show_capture() const;
 };
-
-}
 
 #endif

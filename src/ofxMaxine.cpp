@@ -531,7 +531,7 @@ void ofxMaxine::printCapture() {
 }
 
 
-void ofxMaxine::_process(double delta) {
+void ofxMaxine::update() {
     {
         // lock to ensure thread-safe access to _ocvSrcImg
         std::lock_guard<std::mutex> lock(processing_mutex);
@@ -660,7 +660,7 @@ void ofxMaxine::printPoseTranslation() {
 std::vector<ofVec2f> ofxMaxine::get_landmarks() const {
   std::vector<ofVec2f> landmarks;
   for (const auto& landmark : _landmarks) {
-    landmarks.push_back(Vector2(landmark.x, landmark.y));
+    landmarks.push_back(ofVec2f(landmark.x, landmark.y));
   }
   return landmarks;
 }
@@ -673,20 +673,12 @@ int ofxMaxine::get_expression_count() const {
   return _exprCount;
 }
 
-Array ofxMaxine::get_expressions() const {
-  Array expressions;
-  for (const auto& expression : _expressions) {
-    expressions.push_back(expression);
-  }
-  return expressions;
+std::vector<float> ofxMaxine::get_expressions() const {
+    return _expressions;
 }
 
-Array ofxMaxine::get_landmark_confidence() const {
-  Array confidences;
-  for (const auto& confidence : _landmarkConfidence) {
-    confidences.push_back(confidence);
-  }
-  return confidences;
+std::vector<float> ofxMaxine::get_landmark_confidence() const {
+  return _landmarkConfidence;
 }
 
 ofQuaternion ofxMaxine::get_pose_rotation() const {
@@ -764,8 +756,8 @@ void ofxMaxine::normalizeExpressionsWeights() {
 }
 
 // Function to convert NvAR_Point2f to Godot Vector2
-Vector2 point2f_to_vector2(const NvAR_Point2f& point) {
-    return Vector2(point.x, point.y);
+ofVec2f point2f_to_vector2(const NvAR_Point2f& point) {
+    return ofVec2f(point.x, point.y);
 }
 
 // Function to convert NvAR_Point3f to Godot ofVec3f
@@ -774,40 +766,36 @@ ofVec3f point3f_to_ofVec3f(const NvAR_Point3f& point) {
 }
 
 // Function to convert NvAR_ofQuaternion to Godot ofQuaternion
-ofQuaternion ofQuaternion_to_godot(const NvAR_ofQuaternion& quat) {
+ofQuaternion Quaternion_to_of(const NvAR_Quaternion& quat) {
     return ofQuaternion(quat.x, quat.y, quat.z, quat.w);
 }
 
-Array ofxMaxine::get_keypoints() const {
-    Array keypoints;
+std::vector<ofVec2f> ofxMaxine::get_keypoints() const {
+    std::vector<ofVec2f> keypoints;
     for (const auto& kp : _keypoints) {
         keypoints.push_back(point2f_to_vector2(kp));
     }
     return keypoints;
 }
 
-Array ofxMaxine::get_keypoints3D() const {
-    Array keypoints3D;
+std::vector<ofVec3f> ofxMaxine::get_keypoints3D() const {
+    std::vector<ofVec3f> keypoints3D;
     for (const auto& kp : _keypoints3D) {
         keypoints3D.push_back(point3f_to_ofVec3f(kp));
     }
     return keypoints3D;
 }
 
-Array ofxMaxine::get_joint_angles() const {
-    Array jointAngles;
+std::vector<ofQuaternion> ofxMaxine::get_joint_angles() const {
+    std::vector<ofQuaternion> jointAngles;
     for (const auto& ja : _jointAngles) {
-        jointAngles.push_back(ofQuaternion_to_godot(ja));
+        jointAngles.push_back(Quaternion_to_of(ja));
     }
     return jointAngles;
 }
 
-Array ofxMaxine::get_keypoints_confidence() const {
-    Array confidences;
-    for (const auto& conf : _keypoints_confidence) {
-        confidences.push_back(conf);
-    }
-    return confidences;
+std::vector<float> ofxMaxine::get_keypoints_confidence() const {
+    return _keypoints_confidence;
 }
 
 Array ofxMaxine::get_body_bounding_boxes() const {
@@ -818,16 +806,12 @@ Array ofxMaxine::get_body_bounding_boxes() const {
     return boxes;
 }
 
-Array ofxMaxine::get_body_bounding_box_confidence() const {
-    Array confidences;
-    for (const auto& confidence : _bodyOutputBboxConfData) {
-        confidences.push_back(confidence);
-    }
-    return confidences;
+std::vector<float> ofxMaxine::get_body_bounding_box_confidence() const {
+    return _bodyOutputBboxConfData;
 }
 
-Array ofxMaxine::get_gaze_angles_vector() const {
-  Array gaze_angles;
+std::vector<float> ofxMaxine::get_gaze_angles_vector() const {
+  std::vector<float> gaze_angles;
   for (float angle : _gaze_angles_vector) {
     gaze_angles.push_back(angle);
   }
@@ -836,14 +820,6 @@ Array ofxMaxine::get_gaze_angles_vector() const {
 
 ofVec3f ofxMaxine::get_gaze_direction() const {
   return ofVec3f(_gaze_direction->x, _gaze_direction->y, _gaze_direction->z);
-}
-
-void ofxMaxine::set_camera_device_id(const int p_device_id) {
-  _camera_device_id = p_device_id;
-}
-
-int ofxMaxine::get_camera_device_id() const {
-  return _camera_device_id;
 }
 
 void ofxMaxine::set_show_capture(const bool p_should_show){
