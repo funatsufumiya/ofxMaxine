@@ -1,0 +1,6 @@
+*.sln
+*.vcxproj*
+icon.rc
+*.xcode*
+.DS_Store
+example*/config.make
