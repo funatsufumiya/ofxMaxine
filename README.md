@@ -6,6 +6,7 @@ Tested on oF 0.12.0
 
 > [!WARNING]
 > - Some examples are not meaningful now, just value tests
+> - Now not tested all the features ported from the Godot version.
 
 ## Pre-requisites
 
