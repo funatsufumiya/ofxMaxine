@@ -175,9 +175,9 @@ void ofxMaxine::setup(cv::Mat image) {
     //   static const int fps_precision = FPS_PRECISION; // round frame rate for opencv compatibility
     //   frame_rate = static_cast<int>((frame_rate + 0.5) * fps_precision) / static_cast<double>(fps_precision);
 
-    //   ofLogNotice("ofxMaxine") << ("video width: ", ofToString(width));
-    //   ofLogNotice("ofxMaxine") << ("video height: ", ofToString(height));
-    //   ofLogNotice("ofxMaxine") << ("video FPS: ", ofToString(frame_rate));
+    //   ofLogNotice("ofxMaxine") << ("video width: " << ofToString(width));
+    //   ofLogNotice("ofxMaxine") << ("video height: " << ofToString(height));
+    //   ofLogNotice("ofxMaxine") << ("video FPS: " << ofToString(frame_rate));
 
       _expressionFiltering = 0x037; // bitfield, default, all on except 0x100 enhaced closures
       _poseMode = 1; // 0 - 3DOF implicit for only rotation, 1 - 6DOF explicit for head position
@@ -347,7 +347,7 @@ void ofxMaxine::setup(cv::Mat image) {
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to get keypoint count for boody tracking feature handle");
       } else {
-        ofLogNotice("ofxMaxine") << ("keypoints retrieved: ", ofToString(_numKeyPoints));
+        ofLogNotice("ofxMaxine") << "keypoints retrieved: " << ofToString(_numKeyPoints);
       }
 
       _keypoints.assign(_numKeyPoints, { 0.f, 0.f });
@@ -419,7 +419,7 @@ void ofxMaxine::setup(cv::Mat image) {
       nvErr = NvAR_SetF32Array(_bodyFeature, NvAR_Parameter_Output(KeyPointsConfidence), _keypoints_confidence.data(), sizeof(float));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set keypoints confidence output for body track feature handle");
-        ofLogError("ofxMaxine") << ("ERROR CODE: ", ofToString(nvErr));
+        ofLogError("ofxMaxine") << "ERROR CODE: " << ofToString(nvErr);
       }
 
       _bodyOutputBboxData.assign(25, { 0.f, 0.f, 0.f, 0.f });
@@ -457,26 +457,26 @@ void ofxMaxine::setup(cv::Mat image) {
       nvErr = NvAR_SetF32Array(_gazeFeature, NvAR_Parameter_Output(OutputGazeVector), _gaze_angles_vector, 2);
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set gaze vector output for gaze track feature handle");
-        ofLogError("ofxMaxine") << ("ERROR CODE: ", ofToString(nvErr));
+        ofLogError("ofxMaxine") << "ERROR CODE: " << ofToString(nvErr);
       }
 
       nvErr = NvAR_SetObject(_gazeFeature, NvAR_Parameter_Output(GazeDirection), _gaze_direction, sizeof(NvAR_Point3f));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set gaze direction output for gaze track feature handle");
-        ofLogError("ofxMaxine") << ("ERROR CODE: ", ofToString(nvErr));
+        ofLogError("ofxMaxine") << "ERROR CODE: " << ofToString(nvErr);
       }
 
       nvErr = NvAR_GetU32(_gazeFeature, NvAR_Parameter_Config(Landmarks_Size), &_gazeNumLandmarks);
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to get number of gaze landmarks for gaze track feature handle");
-        ofLogError("ofxMaxine") << ("ERROR CODE: ", ofToString(nvErr));
+        ofLogError("ofxMaxine") << "ERROR CODE: " << ofToString(nvErr);
       }
 
       _gazeFacialLandmarks.assign(_gazeNumLandmarks, {0.f, 0.f});
       nvErr = NvAR_SetObject(_gazeFeature, NvAR_Parameter_Output(Landmarks), _gazeFacialLandmarks.data(), sizeof(NvAR_Point2f));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set gaze landmarks output for gaze track feature handle");
-        ofLogError("ofxMaxine") << ("ERROR CODE: ", ofToString(nvErr));
+        ofLogError("ofxMaxine") << "ERROR CODE: " << ofToString(nvErr);
       }
 
       
