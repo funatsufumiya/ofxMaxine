@@ -1,7 +1,7 @@
 # ofxMaxine
 
 > [!WARNING]
-> Work-In-Progress
+> Work-In-Progress, at very early stage.
 > - The example is doing nothing now
 > - Type conversion from godot to oF port was done (just checked compilation error)
 
@@ -19,3 +19,4 @@ see [LICENSE.NVIDIA.txt](./LICENSE.NVIDIA.txt) and file headers.
 
 
 see [LICENSE](./LICENSE)
+
