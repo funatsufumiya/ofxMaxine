@@ -5,7 +5,7 @@ NVIDIA Maxine SDK for openFrameworks, forked from [GD_MAXINE](https://github.com
 Tested on oF 0.12.0
 
 > [!WARNING]
-> - The examples are not meaningful now, just value tests
+> - Some examples are not meaningful now, just value tests
 
 ## Pre-requisites
 
