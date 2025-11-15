@@ -4,3 +4,8 @@ icon.rc
 *.xcode*
 .DS_Store
 example*/config.make
+.vs/
+obj
+bin/*.exe
+bin/*.dll
+bin/*.pdb
