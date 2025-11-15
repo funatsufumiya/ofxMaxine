@@ -3,6 +3,10 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    ofLogToConsole();
+    ofSetFrameRate(60);
+    ofSetVerticalSync(true);
+
     video.setup(640, 480);
     maxine.setup(video);
 }
