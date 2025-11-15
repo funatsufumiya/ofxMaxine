@@ -13,11 +13,12 @@ Tested on oF 0.12.0
 
 ### Files under `libs/maxine`
 
-see [LICENSE.NVIDIA.txt](./LICENSE.NVIDIA.txt) and file headers.
+see [LICENSE.NVIDIA.txt](./LICENSE.NVIDIA.txt) and the file headers.
 
 ### Others
 
 
 see [LICENSE](./LICENSE)
+
 
 
