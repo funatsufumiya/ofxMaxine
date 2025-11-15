@@ -9,7 +9,7 @@ NVIDIA Maxine SDK for openFrameworks, forked from [GD_MAXINE](https://github.com
 
 Tested on oF 0.12.0
 
-# Pre-requisites
+## Pre-requisites
 
 - Download and install NVIDIA Broadcast: https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-app/
 - Download and install NVIDIA AR SDK: https://www.nvidia.com/en-us/geforce/broadcasting/broadcast-sdk/resources/
