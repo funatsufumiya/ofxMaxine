@@ -35,8 +35,8 @@ class ofxMaxine {
 
 private:
     NvCV_Status nvErr;
-    std::string modelPath;
-    cv::VideoCapture _vidIn;
+    // std::string modelPath;
+    // cv::VideoCapture _vidIn;
 
     NvCVImage _srcImg, _srcGpu;
     NvAR_FeatureHandle _expressionFeature{}, _bodyFeature{}, _gazeFeature{};
@@ -98,13 +98,13 @@ public:
     void printPoseTranslation();
     void printCapture();
 
-    Array get_landmarks() const;
+    std::vector<ofVec2f> get_landmarks() const;
     int get_landmark_count() const;
     int get_expression_count() const;
     Array get_expressions() const;
     Array get_landmark_confidence() const;
-    Vector3 get_pose_translation() const;
-    Quaternion get_pose_rotation() const;
+    ofVec3f get_pose_translation() const;
+    ofQuaternion get_pose_rotation() const;
     Transform3D get_pose_transform() const;
     Dictionary bounding_box_to_dict(const NvAR_Rect& box) const;
     Array get_bounding_boxes() const;
@@ -114,8 +114,8 @@ public:
     void set_expression_count(int p_value) {};
     void set_expressions(const Array& p_value) {};
     void set_landmark_confidence(const Array& p_value) {};
-    void set_pose_rotation(const Quaternion& p_value) {};
-    void set_pose_translation(const Vector3& p_value) {};
+    void set_pose_rotation(const ofQuaternion& p_value) {};
+    void set_pose_translation(const ofVec3f& p_value) {};
     void set_pose_transform(const Transform3D& p_value) {};
     void set_bounding_boxes(const Array& p_value) {};
 
@@ -142,9 +142,9 @@ public:
     void drawKeypoints(cv::Mat& image);
 
     Array get_gaze_angles_vector() const;
-    Vector3 get_gaze_direction() const;
-    void set_gaze_angles_vector(const godot::Array& p_value) {};
-    void set_gaze_direction(const godot::Vector3& p_value) {};
+    ofVec3f get_gaze_direction() const;
+    void set_gaze_angles_vector(const Array& p_value) {};
+    void set_gaze_direction(const ofVec3f& p_value) {};
 
     void set_show_capture(const bool should_show);
     bool get_show_capture() const;

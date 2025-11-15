@@ -143,33 +143,33 @@ ofxMaxine::~ofxMaxine() {
 
 void ofxMaxine::setup() {
 
-    // get model directory
-    const char* _model_path = getenv("NVAR_MODEL_DIR");
-    if (_model_path) {
-      modelPath = _model_path;
-      ofLogNotice("ofxMaxine") << ("NVAR model dir env var located at: ");
-      ofLogNotice("ofxMaxine") << (modelPath.c_str());
+    // // get model directory
+    // const char* _model_path = getenv("NVAR_MODEL_DIR");
+    // if (_model_path) {
+    //   modelPath = _model_path;
+    //   ofLogNotice("ofxMaxine") << ("NVAR model dir env var located at: ");
+    //   ofLogNotice("ofxMaxine") << (modelPath.c_str());
 
-    } else {
-      ofLogNotice("ofxMaxine") << ("failed to located NVAR model dir env var");
-    }
+    // } else {
+    //   ofLogNotice("ofxMaxine") << ("failed to located NVAR model dir env var");
+    // }
 
     // open video capture
-    if (_vidIn.open(_camera_device_id)) {
-      ofLogNotice("ofxMaxine") << ("successfully opened video capture");
+    // if (_vidIn.open(_camera_device_id)) {
+    //   ofLogNotice("ofxMaxine") << ("successfully opened video capture");
 
-      // intialize face expression feature
-      unsigned width, height, frame_rate;
-      width = (unsigned)_vidIn.get(CV_CAP_PROP_FRAME_WIDTH);
-      height = (unsigned)_vidIn.get(CV_CAP_PROP_FRAME_HEIGHT);
-      frame_rate = (unsigned)_vidIn.get(CV_CAP_PROP_FPS);
+    //   // intialize face expression feature
+    //   unsigned width, height, frame_rate;
+    //   width = (unsigned)_vidIn.get(CV_CAP_PROP_FRAME_WIDTH);
+    //   height = (unsigned)_vidIn.get(CV_CAP_PROP_FRAME_HEIGHT);
+    //   frame_rate = (unsigned)_vidIn.get(CV_CAP_PROP_FPS);
 
-      static const int fps_precision = FPS_PRECISION; // round frame rate for opencv compatibility
-      frame_rate = static_cast<int>((frame_rate + 0.5) * fps_precision) / static_cast<double>(fps_precision);
+    //   static const int fps_precision = FPS_PRECISION; // round frame rate for opencv compatibility
+    //   frame_rate = static_cast<int>((frame_rate + 0.5) * fps_precision) / static_cast<double>(fps_precision);
 
-      ofLogNotice("ofxMaxine") << ("video width: ", ofToString(width));
-      ofLogNotice("ofxMaxine") << ("video height: ", ofToString(height));
-      ofLogNotice("ofxMaxine") << ("video FPS: ", ofToString(frame_rate));
+    //   ofLogNotice("ofxMaxine") << ("video width: ", ofToString(width));
+    //   ofLogNotice("ofxMaxine") << ("video height: ", ofToString(height));
+    //   ofLogNotice("ofxMaxine") << ("video FPS: ", ofToString(frame_rate));
 
       _expressionFiltering = 0x037; // bitfield, default, all on except 0x100 enhaced closures
       _poseMode = 1; // 0 - 3DOF implicit for only rotation, 1 - 6DOF explicit for head position
@@ -382,12 +382,12 @@ void ofxMaxine::setup() {
         ofLogError("ofxMaxine") << ("failed to set camera intrinsic params for facial expression feature handle");
       }
 
-      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(Pose), &_pose.rotation, sizeof(NvAR_Quaternion));
+      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(Pose), &_pose.rotation, sizeof(NvAR_ofQuaternion));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set pose rotation output for facial expression feature handle");
       }
 
-      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(PoseTranslation), &_pose.translation, sizeof(NvAR_Vector3f));
+      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(PoseTranslation), &_pose.translation, sizeof(NvAR_ofVec3ff));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set pose translation output for facial expression feature handle");
       }
@@ -403,7 +403,7 @@ void ofxMaxine::setup() {
         ofLogError("ofxMaxine") << ("failed to set keypoints3D output for body track feature handle");
       }
 
-      nvErr = NvAR_SetObject(_bodyFeature, NvAR_Parameter_Output(JointAngles), _jointAngles.data(), sizeof(NvAR_Quaternion));
+      nvErr = NvAR_SetObject(_bodyFeature, NvAR_Parameter_Output(JointAngles), _jointAngles.data(), sizeof(NvAR_ofQuaternion));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set joint angles output for body track feature handle");
       }
@@ -511,9 +511,9 @@ void ofxMaxine::setup() {
       } else {
         ofLogError("ofxMaxine") << ("failed to capture video frame");
       }
-    } else {
-      ofLogError("ofxMaxine") << ("failed to open video capture");
-    }
+    // } else {
+    //   ofLogError("ofxMaxine") << ("failed to open video capture");
+    // }
 }
 
 void ofxMaxine::printCapture() {
@@ -581,7 +581,7 @@ void ofxMaxine::printPoseRotation() {
   ofLogNotice("ofxMaxine") << ("\nFacial Pose Rotation:");
   
   const auto& rotation = _pose.rotation;
-  godot::String rotationStr = "Pose Rotation Quaternion: (" 
+  std::string rotationStr = "Pose Rotation ofQuaternion: (" 
   + ofToString(rotation.x) + ", " 
   + ofToString(rotation.y) + ", " 
   + ofToString(rotation.z) + ", " 
@@ -592,7 +592,7 @@ void ofxMaxine::printPoseRotation() {
 void ofxMaxine::printExpressionCoefficients() {
   ofLogNotice("ofxMaxine") << ("\nFacial Expression Coefficients:");
 
-  godot::String coeffsStr = "";
+  std::string coeffsStr = "";
   for (size_t i = 0; i < _expressions.size(); ++i) {
       coeffsStr += ofToString(_expressions[i]);
       if (i < _expressions.size() - 1) {
@@ -605,7 +605,7 @@ void ofxMaxine::printExpressionCoefficients() {
 void ofxMaxine::printLandmarkLocations() {
   ofLogNotice("ofxMaxine") << ("\nFacial Landmark Locations:");
   
-  godot::String landmarksStr = "";
+  std::string landmarksStr = "";
   for (size_t i = 0; i < _landmarks.size(); ++i) {
       landmarksStr += "(" + ofToString(_landmarks[i].x) + ", " 
                           + ofToString(_landmarks[i].y) + ")";
@@ -619,7 +619,7 @@ void ofxMaxine::printLandmarkLocations() {
 void ofxMaxine::printBoundingBoxes() {
   ofLogNotice("ofxMaxine") << ("\nBounding Boxes: (x, y, width, height)");
 
-  godot::String bboxesStr = "";
+  std::string bboxesStr = "";
   for (size_t i = 0; i < _expressionOutputBboxes.num_boxes; ++i) {
     const auto& box = _expressionOutputBboxes.boxes[i];
     bboxesStr += "("+ ofToString(box.x) + ", " 
@@ -636,7 +636,7 @@ void ofxMaxine::printBoundingBoxes() {
 void ofxMaxine::printLandmarkConfidence() {
   ofLogNotice("ofxMaxine") << ("\nFacial Landmark Confidence:");
 
-  godot::String confidenceStr = "";
+  std::string confidenceStr = "";
   for (size_t i = 0; i < _landmarkConfidence.size(); ++i) {
     confidenceStr += ofToString(_landmarkConfidence[i]);
     if (i < _landmarkConfidence.size() - 1) {
@@ -650,15 +650,15 @@ void ofxMaxine::printPoseTranslation() {
   ofLogNotice("ofxMaxine") << ("\nFacial Pose Translation:");
 
   const auto& translation = _pose.translation;
-  godot::String translationStr = "(" 
+  std::string translationStr = "(" 
     + ofToString(translation.vec[0]) + ", "   // X component
     + ofToString(translation.vec[1]) + ", "   // Y component
     + ofToString(translation.vec[2]) + ")";   // Z component
   ofLogNotice("ofxMaxine") << (translationStr);
 }
 
-Array ofxMaxine::get_landmarks() const {
-  Array landmarks;
+std::vector<ofVec2f> ofxMaxine::get_landmarks() const {
+  std::vector<ofVec2f> landmarks;
   for (const auto& landmark : _landmarks) {
     landmarks.push_back(Vector2(landmark.x, landmark.y));
   }
@@ -689,25 +689,25 @@ Array ofxMaxine::get_landmark_confidence() const {
   return confidences;
 }
 
-Quaternion ofxMaxine::get_pose_rotation() const {
+ofQuaternion ofxMaxine::get_pose_rotation() const {
   const auto& rotation = _pose.rotation;
-  return Quaternion(rotation.x, rotation.y, rotation.z, rotation.w);
+  return ofQuaternion(rotation.x, rotation.y, rotation.z, rotation.w);
 }
 
 
-Vector3 ofxMaxine::get_pose_translation() const {
+ofVec3f ofxMaxine::get_pose_translation() const {
   if (_poseMode == 1) {
     const auto& translation = _pose.translation;
-    return Vector3(translation.vec[0], translation.vec[1], translation.vec[2]);
+    return ofVec3f(translation.vec[0], translation.vec[1], translation.vec[2]);
   } else {
-    return Vector3(0, 0, 0);
+    return ofVec3f(0, 0, 0);
   }
 }
 
 Transform3D ofxMaxine::get_pose_transform() const {
-    Quaternion rotation_quat = get_pose_rotation();
+    ofQuaternion rotation_quat = get_pose_rotation();
     Basis basis = Basis(rotation_quat).orthonormalized();
-    Vector3 translation = get_pose_translation();
+    ofVec3f translation = get_pose_translation();
 
     return Transform3D(basis, translation);
 }
@@ -768,14 +768,14 @@ Vector2 point2f_to_vector2(const NvAR_Point2f& point) {
     return Vector2(point.x, point.y);
 }
 
-// Function to convert NvAR_Point3f to Godot Vector3
-Vector3 point3f_to_vector3(const NvAR_Point3f& point) {
-    return Vector3(point.x, point.y, point.z);
+// Function to convert NvAR_Point3f to Godot ofVec3f
+ofVec3f point3f_to_ofVec3f(const NvAR_Point3f& point) {
+    return ofVec3f(point.x, point.y, point.z);
 }
 
-// Function to convert NvAR_Quaternion to Godot Quaternion
-Quaternion quaternion_to_godot(const NvAR_Quaternion& quat) {
-    return Quaternion(quat.x, quat.y, quat.z, quat.w);
+// Function to convert NvAR_ofQuaternion to Godot ofQuaternion
+ofQuaternion ofQuaternion_to_godot(const NvAR_ofQuaternion& quat) {
+    return ofQuaternion(quat.x, quat.y, quat.z, quat.w);
 }
 
 Array ofxMaxine::get_keypoints() const {
@@ -789,7 +789,7 @@ Array ofxMaxine::get_keypoints() const {
 Array ofxMaxine::get_keypoints3D() const {
     Array keypoints3D;
     for (const auto& kp : _keypoints3D) {
-        keypoints3D.push_back(point3f_to_vector3(kp));
+        keypoints3D.push_back(point3f_to_ofVec3f(kp));
     }
     return keypoints3D;
 }
@@ -797,7 +797,7 @@ Array ofxMaxine::get_keypoints3D() const {
 Array ofxMaxine::get_joint_angles() const {
     Array jointAngles;
     for (const auto& ja : _jointAngles) {
-        jointAngles.push_back(quaternion_to_godot(ja));
+        jointAngles.push_back(ofQuaternion_to_godot(ja));
     }
     return jointAngles;
 }
@@ -834,8 +834,8 @@ Array ofxMaxine::get_gaze_angles_vector() const {
   return gaze_angles;
 }
 
-Vector3 ofxMaxine::get_gaze_direction() const {
-  return Vector3(_gaze_direction->x, _gaze_direction->y, _gaze_direction->z);
+ofVec3f ofxMaxine::get_gaze_direction() const {
+  return ofVec3f(_gaze_direction->x, _gaze_direction->y, _gaze_direction->z);
 }
 
 void ofxMaxine::set_camera_device_id(const int p_device_id) {
