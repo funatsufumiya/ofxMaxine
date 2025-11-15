@@ -696,27 +696,32 @@ ofVec3f ofxMaxine::get_pose_translation() const {
   }
 }
 
-Transform3D ofxMaxine::get_pose_transform() const {
+ofMatrix4x4 ofxMaxine::get_pose_transform() const {
     ofQuaternion rotation_quat = get_pose_rotation();
-    Basis basis = Basis(rotation_quat).orthonormalized();
+    rotation_quat.normalize();
     ofVec3f translation = get_pose_translation();
 
-    return Transform3D(basis, translation);
+    glm::quat quat = rotation_quat;
+    glm::vec3 trans = translation;
+    
+    // auto result = glm::rotate(quat, trans);
+
+    return glm::translate(glm::toMat4(quat), trans);
 }
 
-Dictionary ofxMaxine::bounding_box_to_dict(const NvAR_Rect& box) const {
-    Dictionary bbox;
-    bbox["x"] = box.x;
-    bbox["y"] = box.y;
-    bbox["width"] = box.width;
-    bbox["height"] = box.height;
+ofRectangle ofxMaxine::bounding_box_to_rect(const NvAR_Rect& box) const {
+    ofRectangle bbox;
+    bbox.x = box.x;
+    bbox.x = box.y;
+    bbox.width = box.width;
+    bbox.height = box.height;
     return bbox;
 }
 
-Array ofxMaxine::get_bounding_boxes() const {
-  Array boxes;
+std::vector<ofRectangle> ofxMaxine::get_bounding_boxes() const {
+  std::vector<ofRectangle> boxes;
   for (size_t i = 0; i < _expressionOutputBboxes.num_boxes; ++i) {
-    boxes.push_back(bounding_box_to_dict(_expressionOutputBboxes.boxes[i]));
+    boxes.push_back(bounding_box_to_rect(_expressionOutputBboxes.boxes[i]));
   }
   return boxes;
 }
@@ -801,7 +806,7 @@ std::vector<float> ofxMaxine::get_keypoints_confidence() const {
 Array ofxMaxine::get_body_bounding_boxes() const {
     Array boxes;
     for (size_t i = 0; i < _bodyOutputBboxes.num_boxes; ++i) {
-        boxes.push_back(bounding_box_to_dict(_bodyOutputBboxes.boxes[i]));
+        boxes.push_back(bounding_box_to_rect(_bodyOutputBboxes.boxes[i]));
     }
     return boxes;
 }

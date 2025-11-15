@@ -104,9 +104,9 @@ public:
     std::vector<float> get_landmark_confidence() const;
     ofVec3f get_pose_translation() const;
     ofQuaternion get_pose_rotation() const;
-    Transform3D get_pose_transform() const;
-    Dictionary bounding_box_to_dict(const NvAR_Rect& box) const;
-    Array get_bounding_boxes() const;
+    ofMatrix4x4 get_pose_transform() const;
+    ofRectangle bounding_box_to_rect(const NvAR_Rect& box) const;
+    std::vector<ofRectangle> get_bounding_boxes() const;
 
     void set_landmarks(const Array& p_value) {};
     void set_landmark_count(int p_value) {};
