@@ -7,6 +7,7 @@
  ****************************************************************/
 
 #include "ofxMaxine.h"
+#include "ofxCv.h"
 
 #include <chrono>
 #include <cmath>
@@ -70,10 +71,10 @@ ofxMaxine::ofxMaxine() {
 }
 
 ofxMaxine::~ofxMaxine() {
-  continue_processing = false;
-  if (processing_thread.joinable()) {
-    processing_thread.join();
-  }
+  // continue_processing = false;
+  // if (processing_thread.joinable()) {
+  //   processing_thread.join();
+  // }
   
   
   if (_expressionStream) {
@@ -97,9 +98,9 @@ ofxMaxine::~ofxMaxine() {
     }
   }
   
-  if (_vidIn.isOpened()) {
-    _vidIn.release();
-  }
+  // if (_vidIn.isOpened()) {
+  //   _vidIn.release();
+  // }
 
   // Deallocate NvCVImage objects
   NvCVImage_Dealloc(&_srcGpu);
@@ -138,10 +139,14 @@ ofxMaxine::~ofxMaxine() {
   _bodyOutputBboxConfData.clear();
   
   _ocvSrcImg.release();
-  _processingFrame.release();
+  // _processingFrame.release();
 }
 
-void ofxMaxine::setup() {
+void ofxMaxine::setup(ofVideoGrabber& grabber) {
+  setup(ofxCv::toCv(grabber.getPixels()));
+}
+
+void ofxMaxine::setup(cv::Mat image) {
 
     // // get model directory
     // const char* _model_path = getenv("NVAR_MODEL_DIR");
@@ -163,6 +168,9 @@ void ofxMaxine::setup() {
     //   width = (unsigned)_vidIn.get(CV_CAP_PROP_FRAME_WIDTH);
     //   height = (unsigned)_vidIn.get(CV_CAP_PROP_FRAME_HEIGHT);
     //   frame_rate = (unsigned)_vidIn.get(CV_CAP_PROP_FPS);
+
+    float width = image.size().width;
+    float height = image.size().height;
 
     //   static const int fps_precision = FPS_PRECISION; // round frame rate for opencv compatibility
     //   frame_rate = static_cast<int>((frame_rate + 0.5) * fps_precision) / static_cast<double>(fps_precision);
@@ -382,12 +390,12 @@ void ofxMaxine::setup() {
         ofLogError("ofxMaxine") << ("failed to set camera intrinsic params for facial expression feature handle");
       }
 
-      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(Pose), &_pose.rotation, sizeof(NvAR_ofQuaternion));
+      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(Pose), &_pose.rotation, sizeof(NvAR_Quaternion));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set pose rotation output for facial expression feature handle");
       }
 
-      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(PoseTranslation), &_pose.translation, sizeof(NvAR_ofVec3ff));
+      nvErr = NvAR_SetObject(_expressionFeature, NvAR_Parameter_Output(PoseTranslation), &_pose.translation, sizeof(NvAR_Vector3f));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set pose translation output for facial expression feature handle");
       }
@@ -403,7 +411,7 @@ void ofxMaxine::setup() {
         ofLogError("ofxMaxine") << ("failed to set keypoints3D output for body track feature handle");
       }
 
-      nvErr = NvAR_SetObject(_bodyFeature, NvAR_Parameter_Output(JointAngles), _jointAngles.data(), sizeof(NvAR_ofQuaternion));
+      nvErr = NvAR_SetObject(_bodyFeature, NvAR_Parameter_Output(JointAngles), _jointAngles.data(), sizeof(NvAR_Quaternion));
       if (nvErr!=NVCV_SUCCESS) {
         ofLogError("ofxMaxine") << ("failed to set joint angles output for body track feature handle");
       }
@@ -472,9 +480,10 @@ void ofxMaxine::setup() {
       }
 
       
+      image.copyTo(_ocvSrcImg); // WORKAROUND
 
       // capture image
-      if (_vidIn.read(_ocvSrcImg)) {        
+      // if (_vidIn.read(_ocvSrcImg)) {
         // process image
         nvErr = NvCVImage_Transfer(&_srcImg, &_srcGpu, 1.f, _expressionStream, nullptr);
         if (nvErr!=NVCV_SUCCESS) {
@@ -487,8 +496,8 @@ void ofxMaxine::setup() {
         } else {
           normalizeExpressionsWeights();
 
-          // start capture on separate thread
-          start_processing_thread();
+          // // start capture on separate thread
+          // start_processing_thread();
 
           ofLogNotice("ofxMaxine") << ("successfully initialized facial expression feature");
         }
@@ -508,9 +517,9 @@ void ofxMaxine::setup() {
         }
 
 
-      } else {
-        ofLogError("ofxMaxine") << ("failed to capture video frame");
-      }
+      // } else {
+      //   ofLogError("ofxMaxine") << ("failed to capture video frame");
+      // }
     // } else {
     //   ofLogError("ofxMaxine") << ("failed to open video capture");
     // }
@@ -530,11 +539,16 @@ void ofxMaxine::printCapture() {
   printBoundingBoxes();
 }
 
+void ofxMaxine::update(ofVideoGrabber& grabber) {
+  update(ofxCv::toCv(grabber.getPixels()));
+}
 
-void ofxMaxine::update() {
+void ofxMaxine::update(cv::Mat image) {
     {
-        // lock to ensure thread-safe access to _ocvSrcImg
-        std::lock_guard<std::mutex> lock(processing_mutex);
+        image.copyTo(_ocvSrcImg); // WORKAROUND
+
+        // // lock to ensure thread-safe access to _ocvSrcImg
+        // std::lock_guard<std::mutex> lock(processing_mutex);
 
         // assumes _ocvSrcImg has already been updated by processing_loop
         // transfer image to GPU
@@ -568,9 +582,9 @@ void ofxMaxine::update() {
 
         normalizeExpressionsWeights();
         
-        if(_show_capture){
-          cv::imshow("Src Image", _ocvSrcImg);
-        }
+        // if(_show_capture){
+        //   cv::imshow("Src Image", _ocvSrcImg);
+        // }
     }
 
     // additional process logic
@@ -703,7 +717,7 @@ ofMatrix4x4 ofxMaxine::get_pose_transform() const {
 
     glm::quat quat = rotation_quat;
     glm::vec3 trans = translation;
-    
+
     // auto result = glm::rotate(quat, trans);
 
     return glm::translate(glm::toMat4(quat), trans);
@@ -726,24 +740,24 @@ std::vector<ofRectangle> ofxMaxine::get_bounding_boxes() const {
   return boxes;
 }
 
-void ofxMaxine::start_processing_thread() {
-    continue_processing = true;
-    processing_thread = std::thread(&ofxMaxine::processing_loop, this);
-}
+// void ofxMaxine::start_processing_thread() {
+//     continue_processing = true;
+//     processing_thread = std::thread(&ofxMaxine::processing_loop, this);
+// }
 
-void ofxMaxine::processing_loop() {
-  while (continue_processing) {
-    if (_vidIn.read(_processingFrame)) {
-      {
-        std::lock_guard<std::mutex> lock(processing_mutex);
-        // copy async frame data to _ocvSrcImg
-        _processingFrame.copyTo(_ocvSrcImg); 
-      }
-    } else {
-      ofLogNotice("ofxMaxine") << ("failed to read frame");
-    }
-  }
-}
+// void ofxMaxine::processing_loop() {
+//   while (continue_processing) {
+//     if (_vidIn.read(_processingFrame)) {
+//       {
+//         std::lock_guard<std::mutex> lock(processing_mutex);
+//         // copy async frame data to _ocvSrcImg
+//         _processingFrame.copyTo(_ocvSrcImg); 
+//       }
+//     } else {
+//       ofLogNotice("ofxMaxine") << ("failed to read frame");
+//     }
+//   }
+// }
 
 void ofxMaxine::normalizeExpressionsWeights() {
   assert(_expressions.size() == _exprCount);
@@ -803,8 +817,8 @@ std::vector<float> ofxMaxine::get_keypoints_confidence() const {
     return _keypoints_confidence;
 }
 
-Array ofxMaxine::get_body_bounding_boxes() const {
-    Array boxes;
+std::vector<ofRectangle> ofxMaxine::get_body_bounding_boxes() const {
+    std::vector<ofRectangle> boxes;
     for (size_t i = 0; i < _bodyOutputBboxes.num_boxes; ++i) {
         boxes.push_back(bounding_box_to_rect(_bodyOutputBboxes.boxes[i]));
     }
@@ -827,10 +841,10 @@ ofVec3f ofxMaxine::get_gaze_direction() const {
   return ofVec3f(_gaze_direction->x, _gaze_direction->y, _gaze_direction->z);
 }
 
-void ofxMaxine::set_show_capture(const bool p_should_show){
-  _show_capture = p_should_show;
-}
+// void ofxMaxine::set_show_capture(const bool p_should_show){
+//   _show_capture = p_should_show;
+// }
 
-bool ofxMaxine::get_show_capture() const {
-  return _show_capture;
-}
+// bool ofxMaxine::get_show_capture() const {
+//   return _show_capture;
+// }

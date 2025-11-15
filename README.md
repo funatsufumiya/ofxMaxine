@@ -2,6 +2,8 @@
 
 > [!WARNING]
 > Work-In-Progress
+> - the example is doing nothing now
+> - godot to oF port was done (just checked compilation error)
 
 Forked from [GD_MAXINE](https://github.com/InfernalWAVE/GD_MAXINE)
 

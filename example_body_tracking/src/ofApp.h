@@ -2,6 +2,8 @@
 
 #include "ofMain.h"
 
+#include "ofxMaxine.h"
+
 class ofApp : public ofBaseApp{
 	public:
 		void setup();
@@ -19,4 +21,7 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+		ofxMaxine maxine;
+		ofVideoGrabber video;
 };

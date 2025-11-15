@@ -65,29 +65,33 @@ private:
 
     Pose _pose;
 
-    cv::Mat _ocvSrcImg, _processingFrame;
+    // cv::Mat _ocvSrcImg, _processingFrame;
+
+    cv::Mat _ocvSrcImg;
     float _cameraIntrinsicParams[NUM_CAMERA_INTRINSIC_PARAMS];
     float _globalExpressionParam;
 
-    std::thread processing_thread;
-    std::atomic<bool> continue_processing{false};
-    std::mutex processing_mutex;
+    // std::thread processing_thread;
+    // std::atomic<bool> continue_processing{false};
+    // std::mutex processing_mutex;
 
     float _gaze_angles_vector[2] = {0.f};
     NvAR_Point3f _gaze_direction[2] = {{0.f, 0.f, 0.f}};
     unsigned int _gazeNumLandmarks;
     std::vector<NvAR_Point2f> _gazeFacialLandmarks;
 
-    int _camera_device_id = 0;
-    bool _show_capture = false;
+    // int _camera_device_id = 0;
+    // bool _show_capture = false;
 
 
 public:
     ofxMaxine();
     ~ofxMaxine();
 
-    void setup();
-    void update();
+    void setup(cv::Mat image);
+    void update(cv::Mat image);
+    void setup(ofVideoGrabber& grabber);
+    void update(ofVideoGrabber& grabber);
 
     void printPoseRotation();
     void printExpressionCoefficients();
@@ -108,18 +112,18 @@ public:
     ofRectangle bounding_box_to_rect(const NvAR_Rect& box) const;
     std::vector<ofRectangle> get_bounding_boxes() const;
 
-    void set_landmarks(const Array& p_value) {};
-    void set_landmark_count(int p_value) {};
-    void set_expression_count(int p_value) {};
-    void set_expressions(const Array& p_value) {};
-    void set_landmark_confidence(const Array& p_value) {};
-    void set_pose_rotation(const ofQuaternion& p_value) {};
-    void set_pose_translation(const ofVec3f& p_value) {};
-    void set_pose_transform(const Transform3D& p_value) {};
-    void set_bounding_boxes(const Array& p_value) {};
+    // void set_landmarks(const Array& p_value) {};
+    // void set_landmark_count(int p_value) {};
+    // void set_expression_count(int p_value) {};
+    // void set_expressions(const Array& p_value) {};
+    // void set_landmark_confidence(const Array& p_value) {};
+    // void set_pose_rotation(const ofQuaternion& p_value) {};
+    // void set_pose_translation(const ofVec3f& p_value) {};
+    // void set_pose_transform(const Transform3D& p_value) {};
+    // void set_bounding_boxes(const Array& p_value) {};
 
-    void processing_loop();
-    void start_processing_thread();
+    // void processing_loop();
+    // void start_processing_thread();
 
     void normalizeExpressionsWeights();
 
@@ -127,26 +131,26 @@ public:
     std::vector<ofVec3f> get_keypoints3D() const;
     std::vector<ofQuaternion> get_joint_angles() const;
     std::vector<float> get_keypoints_confidence() const;
-    Array get_body_bounding_boxes() const;
+    std::vector<ofRectangle> get_body_bounding_boxes() const;
     std::vector<float> get_body_bounding_box_confidence() const;
 
-    void set_keypoints(const Array& p_value) {};
-    void set_keypoints3D(const Array& p_value) {};
-    void set_joint_angles(const Array& p_value) {};
-    void set_keypoints_confidence(const Array& p_value) {};
-    void set_body_bounding_boxes(const Array& p_value) {};
-    void set_body_bounding_box_confidence(const Array& p_value) {};
+    // void set_keypoints(const Array& p_value) {};
+    // void set_keypoints3D(const Array& p_value) {};
+    // void set_joint_angles(const Array& p_value) {};
+    // void set_keypoints_confidence(const Array& p_value) {};
+    // void set_body_bounding_boxes(const Array& p_value) {};
+    // void set_body_bounding_box_confidence(const Array& p_value) {};
 
     void drawLandmarks(cv::Mat& image);
     void drawKeypoints(cv::Mat& image);
 
     std::vector<float> get_gaze_angles_vector() const;
     ofVec3f get_gaze_direction() const;
-    void set_gaze_angles_vector(const Array& p_value) {};
-    void set_gaze_direction(const ofVec3f& p_value) {};
+    // void set_gaze_angles_vector(const Array& p_value) {};
+    // void set_gaze_direction(const ofVec3f& p_value) {};
 
-    void set_show_capture(const bool should_show);
-    bool get_show_capture() const;
+    // void set_show_capture(const bool should_show);
+    // bool get_show_capture() const;
 };
 
 #endif
