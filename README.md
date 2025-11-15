@@ -20,8 +20,4 @@ see [LICENSE.NVIDIA.txt](./LICENSE.NVIDIA.txt) and the file headers.
 
 ### Others
 
-
-see [LICENSE](./LICENSE)
-
-
-
+see [LICENSE](./LICENSE).
