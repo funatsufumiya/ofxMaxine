@@ -9,3 +9,4 @@ obj
 bin/*.exe
 bin/*.dll
 bin/*.pdb
+.vscode/*
