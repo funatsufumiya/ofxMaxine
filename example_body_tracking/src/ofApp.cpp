@@ -7,6 +7,10 @@ void ofApp::setup(){
     ofSetFrameRate(60);
     ofSetVerticalSync(true);
 
+    cam.setupPerspective();
+    cam.enableMouseInput();
+    cam.enableMouseMiddleButton();
+
     video.setup(640, 480);
     maxine.setup(video);
 }
@@ -21,24 +25,22 @@ void ofApp::update(){
 void ofApp::draw(){
     video.draw(0, 0);
 
-    // auto keypoints3d = maxine.get_keypoints3D();
+    cam.begin();
 
-    // for(size_t i=0; i<keypoints3d.size(); ++i){
-    //     ofVec3f vec = keypoints3d.at(i);
-    //     for(size_t j=0; j<3; ++j){
-    //         float v = vec.x;
-    //         if(j==1){
-    //             v = vec.y;
-    //         }else if(j==2){
-    //             v = vec.z;
-    //         }
+    auto keypoints3d = maxine.get_keypoints3D();
 
-    //         ofPushStyle();
-    //         ofSetColor(ofMap(v, -10, 10, 0, 255, true), 0, 0);
-    //         ofDrawRectangle(i * 10, 500 + 10 * j, 10, 10);
-    //         ofPopStyle();
-    //     }
-    // }
+    for(size_t i=0; i<keypoints3d.size(); ++i){
+        ofVec3f v = keypoints3d.at(i);
+        ofPushStyle();
+        ofSetColor(0, 255, 0);
+        ofPushMatrix();
+        ofTranslate(v);
+        ofDrawBox(10, 10, 10);
+        ofPopMatrix();
+        ofPopStyle();
+    }
+
+    cam.end();
 
     auto keypoints2d = maxine.get_keypoints();
     for(size_t i=0; i<keypoints2d.size(); ++i){

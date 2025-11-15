@@ -24,4 +24,6 @@ class ofApp : public ofBaseApp{
 
 		ofxMaxine maxine;
 		ofVideoGrabber video;
+
+		ofEasyCam cam;
 };
