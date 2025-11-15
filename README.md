@@ -7,6 +7,8 @@
 
 Forked from [GD_MAXINE](https://github.com/InfernalWAVE/GD_MAXINE)
 
+Tested on oF 0.12.0
+
 ## License
 
 ### Files under `libs/maxine`
