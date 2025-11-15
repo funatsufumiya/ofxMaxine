@@ -592,7 +592,7 @@ void ofxMaxine::update(cv::Mat image) {
 
 
 void ofxMaxine::printPoseRotation() {
-  ofLogNotice("ofxMaxine") << ("\nFacial Pose Rotation:");
+  ofLogNotice("ofxMaxine") << ("Facial Pose Rotation:");
   
   const auto& rotation = _pose.rotation;
   std::string rotationStr = "Pose Rotation ofQuaternion: (" 
@@ -604,7 +604,7 @@ void ofxMaxine::printPoseRotation() {
 }
 
 void ofxMaxine::printExpressionCoefficients() {
-  ofLogNotice("ofxMaxine") << ("\nFacial Expression Coefficients:");
+  ofLogNotice("ofxMaxine") << ("Facial Expression Coefficients:");
 
   std::string coeffsStr = "";
   for (size_t i = 0; i < _expressions.size(); ++i) {
@@ -617,7 +617,7 @@ void ofxMaxine::printExpressionCoefficients() {
 }
 
 void ofxMaxine::printLandmarkLocations() {
-  ofLogNotice("ofxMaxine") << ("\nFacial Landmark Locations:");
+  ofLogNotice("ofxMaxine") << ("Facial Landmark Locations:");
   
   std::string landmarksStr = "";
   for (size_t i = 0; i < _landmarks.size(); ++i) {
@@ -631,7 +631,7 @@ void ofxMaxine::printLandmarkLocations() {
 }
 
 void ofxMaxine::printBoundingBoxes() {
-  ofLogNotice("ofxMaxine") << ("\nBounding Boxes: (x, y, width, height)");
+  ofLogNotice("ofxMaxine") << ("Bounding Boxes: (x, y, width, height)");
 
   std::string bboxesStr = "";
   for (size_t i = 0; i < _expressionOutputBboxes.num_boxes; ++i) {
@@ -648,7 +648,7 @@ void ofxMaxine::printBoundingBoxes() {
 }
 
 void ofxMaxine::printLandmarkConfidence() {
-  ofLogNotice("ofxMaxine") << ("\nFacial Landmark Confidence:");
+  ofLogNotice("ofxMaxine") << ("Facial Landmark Confidence:");
 
   std::string confidenceStr = "";
   for (size_t i = 0; i < _landmarkConfidence.size(); ++i) {
@@ -661,7 +661,7 @@ void ofxMaxine::printLandmarkConfidence() {
 }
 
 void ofxMaxine::printPoseTranslation() {
-  ofLogNotice("ofxMaxine") << ("\nFacial Pose Translation:");
+  ofLogNotice("ofxMaxine") << ("Facial Pose Translation:");
 
   const auto& translation = _pose.translation;
   std::string translationStr = "(" 
