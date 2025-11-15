@@ -16,6 +16,8 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     video.draw(0, 0);
+
+    ofDrawBitmapStringHighlight(ofToString(ofGetFrameRate(), 2, 0, '\0'), 20, 20);
 }
 
 //--------------------------------------------------------------
